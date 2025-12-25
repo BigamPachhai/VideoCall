@@ -36,6 +36,20 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// Health check / root route
+app.get("/", (req, res) => {
+  res.json({
+    message: "Video Call API is running",
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      auth: "/api/auth",
+      users: "/api/users",
+      chat: "/api/chat",
+    },
+  });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
