@@ -103,7 +103,7 @@ const OnboardingPage = () => {
                   setFormState({ ...formState, fullName: e.target.value })
                 }
                 className="input input-bordered w-full"
-                placeholder="Your full name"
+                placeholder="Sita Thapa"
               />
             </div>
 
@@ -191,7 +191,7 @@ const OnboardingPage = () => {
                     setFormState({ ...formState, location: e.target.value })
                   }
                   className="input input-bordered w-full pl-10"
-                  placeholder="City, Country"
+                  placeholder="Kathmandu, Nepal"
                 />
               </div>
             </div>
