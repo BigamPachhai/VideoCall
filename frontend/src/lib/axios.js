@@ -1,6 +1,11 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "/api" : "/api";
+// In development, use Vite proxy (/api) or direct backend URL
+// In production, use the backend URL from environment variable
+const BASE_URL =
+  import.meta.env.MODE === "development"
+    ? "/api"
+    : import.meta.env.VITE_BACKEND_URL || "/api";
 
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
