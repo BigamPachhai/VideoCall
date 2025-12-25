@@ -61,8 +61,8 @@ export async function signup(req, res) {
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true, // prevent XSS attacks,
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // prevent CSRF attacks
-      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" allows cross-site cookies
+      secure: process.env.NODE_ENV === "production", // true in production for HTTPS
       path: "/", // ensure cookie is sent for all paths
     });
 
@@ -96,8 +96,8 @@ export async function login(req, res) {
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true, // prevent XSS attacks,
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // prevent CSRF attacks
-      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" allows cross-site cookies
+      secure: process.env.NODE_ENV === "production", // true in production for HTTPS
       path: "/", // ensure cookie is sent for all paths
     });
 
@@ -109,7 +109,12 @@ export async function login(req, res) {
 }
 
 export function logout(req, res) {
-  res.clearCookie("jwt");
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
   res.status(200).json({ success: true, message: "Logout successful" });
 }
 
