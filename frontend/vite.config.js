@@ -13,4 +13,17 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router'],
+          'stream-video': ['@stream-io/video-react-sdk'],
+          'stream-chat': ['stream-chat', 'stream-chat-react'],
+          'query': ['@tanstack/react-query'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 });
