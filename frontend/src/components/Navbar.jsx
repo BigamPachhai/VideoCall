@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
-import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
+import { BellIcon, LogOutIcon, ShipWheelIcon, User } from "lucide-react";
 import ThemeSelector from "./ThemeSelector";
 import useLogout from "../hooks/useLogout";
 
@@ -9,50 +9,50 @@ const Navbar = () => {
   const location = useLocation();
   const isChatPage = location.pathname?.startsWith("/chat");
 
-  // const queryClient = useQueryClient();
-  // const { mutate: logoutMutation } = useMutation({
-  //   mutationFn: logout,
-  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  // });
-
   const { logoutMutation } = useLogout();
 
   return (
-    <nav className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-end w-full">
-          {/* LOGO - ONLY IN THE CHAT PAGE */}
-          {isChatPage && (
-            <div className="pl-5">
-              <Link to="/" className="flex items-center gap-2.5">
-                <ShipWheelIcon className="size-9 text-primary" />
-                <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
-                  Streamify
-                </span>
-              </Link>
-            </div>
-          )}
-
-          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-            <Link to={"/notifications"}>
-              <button className="btn btn-ghost btn-circle">
-                <BellIcon className="h-6 w-6 text-base-content opacity-70" />
-              </button>
+    <nav className="sticky top-0 z-50 w-full mb-4 px-4 pt-4">
+    <div className="mx-auto max-w-7xl backdrop-blur-xl bg-base-100/70 border border-base-200 shadow-sm rounded-2xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between transition-all duration-300">
+        
+        {/* LOGO */}
+        <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+              <ShipWheelIcon className="size-8 text-primary" />
+              <span className="text-2xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider hidden sm:block">
+                Streamify
+              </span>
             </Link>
-          </div>
+        </div>
 
-          {/* TODO */}
+        <div className="flex items-center gap-2 sm:gap-4">
+           {/* Notifications */}
+          <Link to={"/notifications"} className="btn btn-ghost btn-circle btn-sm sm:btn-md relative group">
+            <BellIcon className="size-5 sm:size-6 text-base-content/70 group-hover:text-primary transition-colors" />
+            {/* Optional: Add badge here if notifications exist */}
+          </Link>
+
           <ThemeSelector />
 
-          <div className="avatar">
-            <div className="w-9 rounded-full">
-              <img src={authUser?.profilePic} alt="User Avatar" rel="noreferrer" />
+          {/* Profile Link */}
+          <Link to="/profile" className="btn btn-ghost btn-circle btn-sm sm:btn-md group">
+            <User className="size-5 sm:size-6 text-base-content/70 group-hover:text-primary transition-colors" />
+          </Link>
+
+          {/* Avatar */}
+          <div className="avatar ring-2 ring-base-200 ring-offset-1 rounded-full hover:ring-primary transition-all duration-300">
+            <div className="w-8 sm:w-9 rounded-full">
+              <img src={authUser?.profilePic || "/avatar.png"} alt="User Avatar" className="object-cover" />
             </div>
           </div>
 
           {/* Logout button */}
-          <button className="btn btn-ghost btn-circle" onClick={logoutMutation}>
-            <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
+          <button 
+            className="btn btn-ghost btn-circle btn-sm sm:btn-md group tooltip tooltip-bottom" 
+            data-tip="Logout"
+            onClick={logoutMutation}
+          >
+            <LogOutIcon className="size-5 sm:size-6 text-base-content/70 group-hover:text-error transition-colors" />
           </button>
         </div>
       </div>

@@ -7,63 +7,73 @@ const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  const isActive = (path) => currentPath === path;
+
   return (
-    <aside className="w-64 bg-base-200 border-r border-base-300 hidden lg:flex flex-col h-screen sticky top-0">
-      <div className="p-5 border-b border-base-300">
-        <Link to="/" className="flex items-center gap-2.5">
-          <ShipWheelIcon className="size-9 text-primary" />
-          <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
+    <aside className="w-80 bg-base-100/80 backdrop-blur-2xl border-r border-base-200/50 hidden lg:flex flex-col h-screen sticky top-0 transition-all duration-300 z-50">
+      <div className="p-8">
+        <Link to="/" className="flex items-center gap-4 group">
+          <div className="bg-gradient-to-br from-primary to-secondary p-3 rounded-2xl shadow-lg group-hover:shadow-primary/50 transition-all duration-300 group-hover:scale-105">
+             <ShipWheelIcon className="size-8 text-white" />
+          </div>
+          <span className="text-3xl font-extrabold font-mono tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-base-content to-base-content/70">
             Streamify
           </span>
         </Link>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 px-6 space-y-3 overflow-y-auto custom-scrollbar pt-4">
+        <p className="text-xs font-bold text-base-content/40 uppercase tracking-widest px-4 mb-4">Menu</p>
+        
         <Link
           to="/"
-          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
-            currentPath === "/" ? "btn-active" : ""
+          className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group ${
+            isActive("/") 
+              ? "bg-primary text-primary-content shadow-xl shadow-primary/25 translate-x-1" 
+              : "hover:bg-base-200/50 text-base-content/60 hover:text-base-content hover:shadow-sm"
           }`}
         >
-          <HomeIcon className="size-5 text-base-content opacity-70" />
-          <span>Home</span>
+          <HomeIcon className={`size-6 ${isActive("/") ? "text-primary-content" : "group-hover:text-primary transition-colors"}`} />
+          <span className="font-semibold text-base">Home</span>
         </Link>
 
-        <Link
-          to="/friends"
-          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
-            currentPath === "/friends" ? "btn-active" : ""
-          }`}
+        <a
+          href="/#friends"
+          className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group hover:bg-base-200/50 text-base-content/60 hover:text-base-content hover:shadow-sm`}
         >
-          <UsersIcon className="size-5 text-base-content opacity-70" />
-          <span>Friends</span>
-        </Link>
+          <UsersIcon className="size-6 group-hover:text-primary transition-colors" />
+          <span className="font-semibold text-base">Friends</span>
+        </a>
 
         <Link
           to="/notifications"
-          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
-            currentPath === "/notifications" ? "btn-active" : ""
+          className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 group ${
+            isActive("/notifications") 
+              ? "bg-primary text-primary-content shadow-xl shadow-primary/25 translate-x-1" 
+              : "hover:bg-base-200/50 text-base-content/60 hover:text-base-content hover:shadow-sm"
           }`}
         >
-          <BellIcon className="size-5 text-base-content opacity-70" />
-          <span>Notifications</span>
+          <BellIcon className={`size-6 ${isActive("/notifications") ? "text-primary-content" : "group-hover:text-primary transition-colors"}`} />
+          <span className="font-semibold text-base">Notifications</span>
         </Link>
       </nav>
 
       {/* USER PROFILE SECTION */}
-      <div className="p-4 border-t border-base-300 mt-auto">
-        <div className="flex items-center gap-3">
-          <div className="avatar">
-            <div className="w-10 rounded-full">
-              <img src={authUser?.profilePic} alt="User Avatar" />
+      <div className="p-6 mt-auto">
+        <div className="bg-base-200/40 rounded-[2rem] p-4 border border-base-200 transition-all hover:bg-base-200/60 hover:shadow-md cursor-pointer group">
+          <div className="flex items-center gap-4">
+            <div className="avatar online relative">
+              <div className="w-12 rounded-full ring-2 ring-primary ring-offset-2 ring-offset-base-100 group-hover:scale-105 transition-transform">
+                <img src={authUser?.profilePic || "/avatar.png"} alt="User Avatar" className="object-cover" />
+              </div>
             </div>
-          </div>
-          <div className="flex-1">
-            <p className="font-semibold text-sm">{authUser?.fullName}</p>
-            <p className="text-xs text-success flex items-center gap-1">
-              <span className="size-2 rounded-full bg-success inline-block" />
-              Online
-            </p>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-base truncate group-hover:text-primary transition-colors">{authUser?.fullName}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                 <span className="size-2 rounded-full bg-success animate-pulse" />
+                 <p className="text-xs font-medium text-base-content/50">Online Now</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import FriendRequest from "../models/FriendRequest.js";
+import cloudinary from "../lib/cloudinary.js";
 
 export async function getRecommendedUsers(req, res) {
   try {
@@ -143,6 +144,35 @@ export async function getOutgoingFriendReqs(req, res) {
     res.status(200).json(outgoingRequests);
   } catch (error) {
     console.log("Error in getOutgoingFriendReqs controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function updateProfile(req, res) {
+  try {
+    const { profilePic } = req.body;
+    const userId = req.user.id;
+
+    if (!profilePic) {
+      return res.status(400).json({ message: "Profile picture is required" });
+    }
+
+    let imageUrl = profilePic;
+
+    if (profilePic.startsWith("data:image")) {
+       const uploadResponse = await cloudinary.uploader.upload(profilePic);
+       imageUrl = uploadResponse.secure_url;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: imageUrl },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("Error in updateProfile controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }

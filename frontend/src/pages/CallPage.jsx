@@ -29,7 +29,7 @@ const CallPage = () => {
 
   const { authUser, isLoading } = useAuthUser();
 
-  const { data: tokenData } = useQuery({
+  const { data: tokenData, isLoading: isTokenLoading } = useQuery({
     queryKey: ["streamToken"],
     queryFn: getStreamToken,
     enabled: !!authUser,
@@ -37,7 +37,10 @@ const CallPage = () => {
 
   useEffect(() => {
     const initCall = async () => {
-      if (!tokenData.token || !authUser || !callId) return;
+      // safe access tokenData
+      if (!tokenData?.token || !authUser || !callId) return;
+
+      if (client && call) return; // Prevent multiple initializations
 
       try {
         console.log("Initializing Stream video client...");
@@ -62,22 +65,32 @@ const CallPage = () => {
 
         setClient(videoClient);
         setCall(callInstance);
+        setIsConnecting(false); 
       } catch (error) {
         console.error("Error joining call:", error);
         toast.error("Could not join the call. Please try again.");
-      } finally {
-        setIsConnecting(false);
+        setIsConnecting(false); 
       }
     };
 
     initCall();
+
+    return () => {
+      if (client) {
+        // Cleanup on unmount
+        console.log("Disconnecting stream video client...");
+        client.disconnectUser();
+        setClient(null);
+        setCall(null);
+      }
+    };
   }, [tokenData, authUser, callId]);
 
-  if (isLoading || isConnecting) return <PageLoader />;
+  if (isLoading || isTokenLoading || isConnecting) return <PageLoader />;
 
   return (
     <div className="h-screen flex flex-col items-center justify-center">
-      <div className="relative">
+      <div className="relative w-full h-full">
         {client && call ? (
           <StreamVideo client={client}>
             <StreamCall call={call}>
@@ -100,7 +113,13 @@ const CallContent = () => {
 
   const navigate = useNavigate();
 
-  if (callingState === CallingState.LEFT) return navigate("/");
+  useEffect(() => {
+    if (callingState === CallingState.LEFT) {
+      navigate("/");
+    }
+  }, [callingState, navigate]);
+
+  if (callingState === CallingState.LEFT) return null;
 
   return (
     <StreamTheme>
